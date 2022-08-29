@@ -1,6 +1,9 @@
+from operator import ne
 import numpy as np
 import pandas as pd
 from colorama import Fore, Back, Style
+import os
+import time
 
 iterations = int(input())
 if(iterations == -1):
@@ -35,9 +38,10 @@ class config():
         self.o_char_out = Fore.WHITE + Back.WHITE + self.char + Style.RESET_ALL
         self.x_char = 1
         self.o_char = 0
-        self.space_char = ' '
-        self.new_line = '\n'
+        self.space_char = ''
+        self.new_line = ''
         self.grid_list = self.grid()
+        self.output_file = open('./output.txt', 'w')
     def grid(self):
         grid = []
         for i in range(m):
@@ -64,11 +68,49 @@ class config():
             grid[i] = [0] + grid[i] + [0]
         grid = [[0]*len(grid[0])] + grid + [[0]*len(grid[0])]
         # Now the grid is padded and the new generation can be used as the reference, since it is padded. 
-                
-
+        neigbours = [
+            [1, 1], [1, 0], [1, -1],
+            [0, 1], [0, -1],
+            [-1, 1], [-1, 0], [-1, -1],
+        ]
+        next_gen = []
+        for i in range(1, len(grid)-1):
+            temp = []
+            for j in range(1, len(grid[0])-1):
+                temp_n = [grid[i+x[0]][j + x[1]] for x in neigbours]
+                # temp-n has the neighbour values for i, j th positions in the grid
+                temp += [self.test_rule(grid[i][j], temp_n)] # this is the place we are going to have to add the rule
+            next_gen += [temp]
+        self.render(next_gen)
+        self.grid_list = next_gen
+        self.output_file.write(self.output_string(self.grid_list))
+    def test_rule(self, state, neighbours):
+        if(state):
+            return 1
+        else:
+            if(neighbours[4]):
+                return 1
+            else:
+                return 0
+    def output_string(self, grid):
+        str_out = ""
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if(grid[i][j]):
+                    str_out += 'X'
+                else:
+                    str_out += 'O'
+            str_out += '\n'
+        return str_out + '\n'
 conf = config(m, n, k, marked_cells)
 print(m, n, k)
 print(marked_cells)
+os.system('clear')
+print('Initial State')
 conf.render(conf.grid_list)
-print('\n\n')
-conf.new_gen()
+time.sleep(0.5)
+for i in range(iterations):
+    os.system('clear')
+    print('Iteration - '+ str(i+1))
+    conf.new_gen()
+    time.sleep(0.5)
