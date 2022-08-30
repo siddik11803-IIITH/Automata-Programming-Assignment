@@ -5,30 +5,8 @@ from colorama import Fore, Back, Style
 import os
 import time
 
-iterations = int(input())
-if(iterations == -1):
-    print("Adios")
-    quit()
-
-
-# Getting the configuration
-config_file_dir = "./config.txt"
-config_file = open(config_file_dir, 'r')
-config_file_content = config_file.read()
-config_file_content = config_file_content.split('\n')
-temp = config_file_content[0].split(' ')
-config_file_content = config_file_content[1:]
-m = int(temp[0])
-n = int(temp[1])
-k = int(temp[2])
-marked_cells = []
-for i in range(k):
-    temp = config_file_content[i].split(' ')
-    marked_cells += [[int(temp[0]) - 1, int(temp[1]) - 1]]
-
-
 class config():
-    def __init__(self, m, n, k, marked_cells):
+    def __init__(self, m, n, k, marked_cells, rule):
         self.m = m
         self.n = n
         self.k = k
@@ -42,6 +20,7 @@ class config():
         self.new_line = ''
         self.grid_list = self.grid()
         self.output_file = open('./output.txt', 'w')
+        self.rule = rule
     def grid(self):
         grid = []
         for i in range(m):
@@ -70,7 +49,7 @@ class config():
         # Now the grid is padded and the new generation can be used as the reference, since it is padded. 
         neigbours = [
             [1, 1], [1, 0], [1, -1],
-            [0, 1], [0, -1],
+            [0, 1],         [0, -1],
             [-1, 1], [-1, 0], [-1, -1],
         ]
         next_gen = []
@@ -79,7 +58,7 @@ class config():
             for j in range(1, len(grid[0])-1):
                 temp_n = [grid[i+x[0]][j + x[1]] for x in neigbours]
                 # temp-n has the neighbour values for i, j th positions in the grid
-                temp += [self.test_rule(grid[i][j], temp_n)] # this is the place we are going to have to add the rule
+                temp += [self.rule(grid[i][j], temp_n)] # this is the place we are going to have to add the rule
             next_gen += [temp]
         self.render(next_gen)
         self.grid_list = next_gen
@@ -102,15 +81,75 @@ class config():
                     str_out += 'O'
             str_out += '\n'
         return str_out + '\n'
-conf = config(m, n, k, marked_cells)
-print(m, n, k)
-print(marked_cells)
+
+
+
+
+
+
+iterations = int(input())
+if(iterations == -1):
+    print("Adios")
+    quit()
+
+
+# Getting the configuration
+config_file_dir = "./../src/q3/config.txt"
+config_file = open(config_file_dir, 'r')
+config_file_content = config_file.read()
+config_file_content = config_file_content.split('\n')
+temp = config_file_content[0].split(' ')
+config_file_content = config_file_content[1:]
+m = int(temp[0])
+n = int(temp[1])
+k = int(temp[2])
+marked_cells = []
+for i in range(k):
+    temp = config_file_content[i].split(' ')
+    print(temp)
+    marked_cells += [[int(temp[0]) - 1, int(temp[1]) - 1]]
+
+
+
+def rule_q1(state, neighbours):
+    if(state):
+        return 1
+    else:
+        if(neighbours[4]):
+            return 1
+        else:
+            return 0
+
+def rule_q2(state, neighbours):
+    print()
+    if(neighbours[1] == 1 and neighbours[6] == 1 and state == 1):
+        return 1
+    if(neighbours[3] == 1 and neighbours[4] == 1 and state == 1):
+        return 1
+    elif(neighbours[2] and neighbours[4] and neighbours[7]):
+        return 1
+    elif(neighbours[0] and neighbours[3] and neighbours[5]):
+        return 1
+    elif(neighbours[0] and neighbours[1] and neighbours[2]):
+        return 1
+    elif(neighbours[5] and neighbours[6] and neighbours[7]):
+        return 1
+    return 0
+
+
+
+
+conf = config(m, n, k, marked_cells, rule_q1)
+
+
+
+# Actually rendering the answer. 
 os.system('clear')
 print('Initial State')
 conf.render(conf.grid_list)
-time.sleep(0.5)
-for i in range(iterations):
-    os.system('clear')
-    print('Iteration - '+ str(i+1))
-    conf.new_gen()
-    time.sleep(0.5)
+time.sleep(0.7)
+# for i in range(iterations):
+#     os.system('clear')
+#     conf.new_gen()
+#     print('Iteration - '+ str(i+1))
+#     time.sleep(0.7)
