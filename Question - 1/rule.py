@@ -94,7 +94,7 @@ if(iterations == -1):
 
 
 # Getting the configuration
-config_file_dir = "./../src/q"+str(question)+"/config.txt"
+config_file_dir = "./q"+str(question)+"/config.txt"
 config_file = open(config_file_dir, 'r')
 config_file_content = config_file.read()
 config_file_content = config_file_content.split('\n')
