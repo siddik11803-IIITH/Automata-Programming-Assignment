@@ -16,7 +16,7 @@ class config():
         self.o_char_out = Fore.WHITE + Back.WHITE + self.char + Style.RESET_ALL
         self.x_char = 1
         self.o_char = 0
-        self.space_char = ''
+        self.space_char = ' '
         self.new_line = ''
         self.grid_list = self.grid()
         self.output_file = open('./output.txt', 'w')
@@ -84,17 +84,17 @@ class config():
 
 
 
+question = int(input("Enter the Question Number: "))
 
 
-
-iterations = int(input())
+iterations = int(input("Enter number of iterations: "))
 if(iterations == -1):
     print("Adios")
     quit()
 
 
 # Getting the configuration
-config_file_dir = "./../src/q3/config.txt"
+config_file_dir = "./../src/q"+str(question)+"/config.txt"
 config_file = open(config_file_dir, 'r')
 config_file_content = config_file.read()
 config_file_content = config_file_content.split('\n')
@@ -106,7 +106,6 @@ k = int(temp[2])
 marked_cells = []
 for i in range(k):
     temp = config_file_content[i].split(' ')
-    print(temp)
     marked_cells += [[int(temp[0]) - 1, int(temp[1]) - 1]]
 
 
@@ -136,10 +135,15 @@ def rule_q2(state, neighbours):
         return 1
     return 0
 
+def rule_q3(state, neighbours):
+    if(sum(neighbours) > 0 or state):
+        return 1
+    return 0
 
 
+rule_dict = {1: rule_q1, 2: rule_q2, 3: rule_q3}
 
-conf = config(m, n, k, marked_cells, rule_q1)
+conf = config(m, n, k, marked_cells, rule_dict[question])
 
 
 
@@ -148,8 +152,8 @@ os.system('clear')
 print('Initial State')
 conf.render(conf.grid_list)
 time.sleep(0.7)
-# for i in range(iterations):
-#     os.system('clear')
-#     conf.new_gen()
-#     print('Iteration - '+ str(i+1))
-#     time.sleep(0.7)
+for i in range(iterations):
+    os.system('clear')
+    conf.new_gen()
+    print('Iteration - '+ str(i+1))
+    time.sleep(0.7)
