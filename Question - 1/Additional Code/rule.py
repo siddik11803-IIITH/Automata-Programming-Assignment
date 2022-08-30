@@ -1,6 +1,3 @@
-from operator import ne
-import numpy as np
-import pandas as pd
 from colorama import Fore, Back, Style
 import os
 import time
@@ -94,7 +91,7 @@ if(iterations == -1):
 
 
 # Getting the configuration
-config_file_dir = "./q"+str(question)+"/config.txt"
+config_file_dir = "./../q"+str(question)+"/config.txt"
 config_file = open(config_file_dir, 'r')
 config_file_content = config_file.read()
 config_file_content = config_file_content.split('\n')
@@ -136,7 +133,7 @@ def rule_q2(state, neighbours):
     return 0
 
 def rule_q3(state, neighbours):
-    if(sum(neighbours) > 0 or state):
+    if(neighbours[1] or neighbours[6] or state):
         return 1
     return 0
 

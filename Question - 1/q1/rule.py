@@ -1,6 +1,3 @@
-from operator import ne
-import numpy as np
-import pandas as pd
 from colorama import Fore, Back, Style
 import os
 import time
@@ -41,7 +38,7 @@ class config():
                     print(self.o_char_out, end =self.space_char)
             print(self.new_line)
         # The print seems to be working.
-    def new_gen(self):
+    def new_gen(self, title):
         grid = self.grid_list[:]
         for i in range(len(grid)):
             grid[i] = [0] + grid[i] + [0]
@@ -62,7 +59,7 @@ class config():
             next_gen += [temp]
         self.render(next_gen)
         self.grid_list = next_gen
-        self.output_file.write(self.output_string(self.grid_list))
+        self.output_file.write(self.output_string(self.grid_list, title))
     def test_rule(self, state, neighbours):
         if(state):
             return 1
@@ -71,14 +68,14 @@ class config():
                 return 1
             else:
                 return 0
-    def output_string(self, grid):
-        str_out = ""
+    def output_string(self, grid, title):
+        str_out = title+"\n"
         for i in range(len(grid)):
             for j in range(len(grid[0])):
                 if(grid[i][j]):
-                    str_out += 'X'
+                    str_out += '1'
                 else:
-                    str_out += 'O'
+                    str_out += '0'
             str_out += '\n'
         return str_out + '\n'
 
@@ -136,7 +133,7 @@ def rule_q2(state, neighbours):
     return 0
 
 def rule_q3(state, neighbours):
-    if(sum(neighbours) > 0 or state):
+    if(neighbours[1] or neighbours[6] or state):
         return 1
     return 0
 
@@ -154,6 +151,6 @@ conf.render(conf.grid_list)
 time.sleep(0.7)
 for i in range(iterations):
     os.system('clear')
-    conf.new_gen()
+    conf.new_gen('Iteration - '+ str(i+1))
     print('Iteration - '+ str(i+1))
     time.sleep(0.7)
