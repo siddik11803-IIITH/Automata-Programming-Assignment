@@ -2,6 +2,9 @@ from colorama import Fore, Back, Style
 import os
 import time
 
+
+
+
 class config():
     def __init__(self, m, n, k, marked_cells, rule):
         self.m = m
